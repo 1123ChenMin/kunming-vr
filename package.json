@@ -1,0 +1,20 @@
+{
+  "name": "kunming-vr",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "dev:https": "vite --host 0.0.0.0 --mode https",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@gltf-transform/cli": "^4.4.1",
+    "@vitejs/plugin-basic-ssl": "^2.3.0",
+    "vite": "^7.3.1"
+  },
+  "dependencies": {
+    "three": "^0.182.0"
+  }
+}

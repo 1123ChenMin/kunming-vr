@@ -1,0 +1,32 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Only publish the models used by the web experience. Original high-resolution
+# source models remain local because GitHub rejects files larger than 100 MB.
+public/models/*
+!public/models/翠湖公园完整.deploy.glb
+!public/models/翠湖公园VR.glb
+!public/models/放大海心亭建筑.web.glb
+!public/models/九曲桥展开图.glb
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

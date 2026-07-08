@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>翠湖历史夜游探索</title>
+    <style>
+        body { margin: 0; overflow: hidden; font-family: "PingFang SC", "Microsoft YaHei", sans-serif; background: #000; color: #fff; }
+        .hidden { display: none !important; }
+
+        /* --- 场景 1 UI 样式 --- */
+        #start-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 50% 40%, rgba(19, 85, 88, 0.32), rgba(3, 8, 18, 0.9) 62%, #02040a 100%); z-index: 2000; backdrop-filter: blur(2px); overflow: hidden; }
+        #start-screen::before { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(2, 7, 16, 0.25), rgba(2, 7, 16, 0.05) 45%, rgba(2, 7, 16, 0.82)); pointer-events: none; z-index: 1; }
+        #start-screen::after { content: ""; position: absolute; left: -5%; right: -5%; bottom: -8%; height: 28%; background: rgba(5, 44, 49, 0.78); border-top: 1px solid rgba(255, 202, 40, 0.32); box-shadow: inset 0 18px 42px rgba(255, 202, 40, 0.08); pointer-events: none; z-index: 1; }
+        .hero-visual { position: absolute; z-index: 2; pointer-events: none; filter: drop-shadow(0 24px 38px rgba(0,0,0,0.65)); }
+        .hero-pavilion { right: 6%; bottom: 12%; width: min(34vw, 480px); height: 42vh; object-fit: cover; border-radius: 8px; opacity: 0.92; border: 1px solid rgba(255, 202, 40, 0.22); }
+        .hero-bridge { left: 27%; bottom: 7%; width: min(42vw, 620px); height: 24vh; object-fit: cover; border-radius: 8px; opacity: 0.9; border: 1px solid rgba(255, 202, 40, 0.18); }
+        .starlight { position: absolute; background: #fff; border-radius: 50%; box-shadow: 0 0 8px #fff, 0 0 15px #ffca28; animation: floatStar linear infinite; pointer-events: none; }
+        @keyframes floatStar { 0% { opacity: 0; transform: translateY(0) scale(0.5); } 50% { opacity: 1; transform: translateY(-50px) scale(1.2); } 100% { opacity: 0; transform: translateY(-100px) scale(0.5); } }
+        .lang-toggle-top { position: absolute; top: 30px; right: 30px; background: rgba(255, 255, 255, 0.1); border: 1px solid #ffcc00; color: #ffcc00; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-weight: bold; backdrop-filter: blur(5px); transition: 0.3s; z-index: 10000; }
+        .lang-toggle-top:hover { background: #ffcc00; color: #000; }
+        .project-title { position: absolute; top: 24%; left: 50%; transform: translate(-50%, -50%); font-size: clamp(2.8rem, 6vw, 5.8rem); color: #ffca28; text-shadow: 0 0 24px rgba(255, 100, 0, 0.9), 0 8px 28px rgba(0,0,0,0.9); font-family: "KaiTi", "STKaiti", serif; letter-spacing: 8px; text-align: center; width: 100%; z-index: 3; }
+        .hero-subtitle { position: absolute; top: 36%; left: 50%; transform: translateX(-50%); z-index: 3; color: #f8e4a8; font-size: 1.05rem; letter-spacing: 4px; text-shadow: 0 2px 10px #000; }
+        .lantern-container { position: absolute; bottom: 48px; left: 52px; display: flex; gap: 26px; align-items: flex-end; z-index: 4; }
+        .lantern-btn { position: relative; width: 98px; height: 148px; cursor: pointer; display: flex; justify-content: center; align-items: center; animation: floatLantern 3.5s ease-in-out infinite; transition: transform 0.3s, filter 0.3s; }
+        .lantern-btn:hover { transform: translateY(-10px) scale(1.04); filter: drop-shadow(0 0 18px rgba(255, 202, 40, 0.75)); }
+        .lantern-img { width: 100%; height: 100%; object-fit: contain; position: absolute; top: 0; left: 0; z-index: -1; }
+        .lantern-text { position: absolute; top: 35px; color: #ffca28; font-family: "KaiTi", "STKaiti", serif; font-size: 1.2rem; font-weight: bold; text-align: center; line-height: 1.2; text-shadow: 2px 2px 5px rgba(0,0,0,1); pointer-events: none; }
+        @keyframes floatLantern { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+        .modal { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 340px; background: rgba(30,20,15,0.95); border: 2px solid #ffca28; padding: 25px; border-radius: 10px; z-index: 3000; backdrop-filter: blur(10px); text-align: center; }
+        .about-modal { width: min(680px, calc(100vw - 40px)); max-height: min(78vh, 720px); display: flex; flex-direction: column; box-sizing: border-box; }
+        .about-content { max-height: 58vh; overflow-y: auto; text-align: left; padding-right: 12px; color: #eee; font-size: 14px; line-height: 1.75; }
+        .about-content h4 { color: #ffca28; margin: 16px 0 8px; font-size: 16px; }
+        .about-content p { margin: 0 0 8px; }
+        .about-content ul, .about-content ol { margin: 0 0 8px 20px; padding: 0; }
+        .about-content li { margin-bottom: 6px; }
+        .about-content strong { color: #fff3c4; }
+        .about-close { width: 100%; margin-top: 16px; padding: 10px; background:#ffca28; border:none; border-radius:5px; cursor:pointer; color:#3e2723; font-weight:bold; }
+        .wish-modal { width: min(420px, calc(100vw - 40px)); box-sizing: border-box; }
+        .wish-modal p { margin: 0 0 14px; color: #f5e4bf; font-size: 14px; line-height: 1.6; text-align: left; }
+        .wish-modal textarea { width: 100%; min-height: 110px; resize: vertical; box-sizing: border-box; padding: 12px; border-radius: 8px; border: 1px solid rgba(255, 202, 40, 0.75); outline: none; background: rgba(0,0,0,0.35); color: #fff; font-family: inherit; font-size: 14px; line-height: 1.5; }
+        .wish-modal textarea:focus { box-shadow: 0 0 0 2px rgba(255, 202, 40, 0.25); }
+        .wish-actions { display: flex; gap: 10px; margin-top: 14px; }
+        .wish-actions button { flex: 1; padding: 10px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        #btn-wish-submit { background: #ffca28; color: #3e2723; }
+        #btn-wish-cancel { background: rgba(255,255,255,0.14); color: #f5e4bf; border: 1px solid rgba(255,255,255,0.24); }
+        #wish-feedback { min-height: 20px; margin-top: 8px; color: #ffca28; font-size: 13px; text-align: left; }
+        #vr-button-container { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 100; }
+
+        /* --- 新增：加载界面 UI 样式 --- */
+        #loading-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: #000; z-index: 9999; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; }
+        .carousel-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 2s ease-in-out; z-index: 1; }
+        .carousel-bg.active { opacity: 0.5; }
+        .marquee-container { position: absolute; top: 15%; width: 100%; white-space: nowrap; overflow: hidden; z-index: 10; background: rgba(0, 0, 0, 0.5); padding: 15px 0; border-top: 1px solid #009688; border-bottom: 1px solid #009688; }
+        .marquee-text { display: inline-block; font-family: "KaiTi", "STKaiti", serif; font-size: 1.8rem; color: #fff; text-shadow: 2px 2px 4px #000; padding-left: 100%; animation: scrollText 80s linear infinite; }
+        @keyframes scrollText { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+        .loading-ui-wrapper { position: absolute; bottom: 15%; width: 60%; left: 20%; z-index: 10; display: flex; flex-direction: column; align-items: center; }
+        .progress-bar-container { width: 100%; height: 6px; background: rgba(255,255,255,0.3); border-radius: 4px; position: relative; margin-bottom: 20px; }
+        .progress-fill { width: 0%; height: 100%; background: #009688; border-radius: 4px; transition: width 0.1s; box-shadow: 0 0 10px #009688; }
+        .lantern-icon { position: absolute; top: -35px; left: 0%; transform: translateX(-50%); width: 40px; height: auto; transition: left 0.1s; filter: drop-shadow(0 0 8px #009688); }
+        #loading-percentage-text { font-size: 1.2rem; color: #009688; font-weight: bold; letter-spacing: 2px; text-shadow: 1px 1px 2px #000; }
+
+        /* --- 场景 2 交互 UI 样式 --- */
+        #ui-overlay { position: absolute; bottom: 0; width: 100%; height: 120px; pointer-events: none; display: none; z-index: 1000; }
+        .movement-controls { position: absolute; bottom: 20px; left: 20px; display: grid; grid-template-areas: ". w ." "a s d"; gap: 5px; pointer-events: auto; }
+        .control-btn { width: 45px; height: 45px; background: rgba(255,202,40,0.3); border: 1px solid #ffca28; color: #ffca28; display: flex; align-items: center; justify-content: center; border-radius: 5px; cursor: pointer; user-select: none; font-weight: bold; }
+        .control-btn:active { background: rgba(255,202,40,0.6); }
+        .system-controls { position: absolute; bottom: 20px; right: 20px; display: flex; gap: 15px; pointer-events: auto; align-items: center; }
+        .sys-btn { width: 50px; height: 50px; cursor: pointer; border-radius: 25px; transition: transform 0.2s; }
+        .sys-btn:hover { transform: scale(1.1); }
+        .tour-btn { min-width: 86px; height: 42px; padding: 0 12px; border: 1px solid #ffca28; border-radius: 8px; background: rgba(30, 20, 15, 0.78); color: #ffca28; font-weight: bold; cursor: pointer; }
+        .tour-btn.active { background: #ffca28; color: #3e2723; }
+        .wish-launcher { position: absolute; right: 24px; bottom: 95px; width: 132px; min-height: 48px; display: none; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid rgba(255,202,40,0.85); border-radius: 8px; background: rgba(35, 20, 10, 0.82); color: #ffca28; font-weight: bold; cursor: pointer; pointer-events: auto; backdrop-filter: blur(6px); box-shadow: 0 0 18px rgba(255, 150, 40, 0.35); transition: transform 0.2s, background 0.2s; }
+        .wish-launcher:hover { background: rgba(65, 35, 12, 0.92); transform: translateY(-2px); }
+        .wish-launcher img { width: 30px; height: 34px; object-fit: contain; filter: drop-shadow(0 0 8px rgba(255, 202, 40, 0.8)); }
+        .wish-launcher span { line-height: 1.2; }
+        #VRButton { display: none !important; }
+
+        /* --- 景点信息弹窗与多场景控制按钮样式 --- */
+        #info-panel { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80%; max-width: 350px; background: rgba(20, 15, 10, 0.95); border: 2px solid #ffca28; border-radius: 10px; padding: 20px; z-index: 2500; display: flex; flex-direction: column; align-items: center; box-shadow: 0 0 20px rgba(255, 202, 40, 0.5); backdrop-filter: blur(10px); }
+        #info-panel img { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; margin-bottom: 15px; border: 1px solid #555; }
+        #info-panel h2 { color: #ffca28; margin: 0 0 15px 0; font-family: "KaiTi", "STKaiti", serif; }
+        .audio-controls { display: flex; gap: 10px; width: 100%; }
+        .audio-btn { flex: 1; padding: 10px; background: #ffca28; border: none; border-radius: 5px; cursor: pointer; color: #3e2723; font-weight: bold; transition: 0.2s; }
+        .audio-btn:hover { background: #fff3e0; }
+        .audio-btn.playing { background: #ff9800; color: #fff; }
+        .close-btn { position: absolute; top: 10px; right: 15px; background: none; border: none; color: #fff; font-size: 28px; cursor: pointer; line-height: 1; }
+        .close-btn:hover { color: #ffca28; }
+        
+        #btn-enter-scene { width: 100%; margin-top: 15px; padding: 12px; background: #009688; border: none; border-radius: 5px; cursor: pointer; color: white; font-weight: bold; font-size: 1.1rem; transition: 0.2s; }
+        #btn-enter-scene:hover { background: #00796b; }
+        #btn-return-park { position: absolute; top: 20px; left: 20px; padding: 10px 20px; background: rgba(255, 50, 50, 0.8); border: 2px solid #ffca28; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; pointer-events: auto; backdrop-filter: blur(5px); z-index: 2000; }
+        #btn-return-park:hover { background: rgba(255, 0, 0, 0.9); }
+        #btn-return-home { position: absolute; top: 20px; left: 20px; padding: 10px 18px; background: rgba(30, 20, 15, 0.82); border: 2px solid #ffca28; border-radius: 8px; color: #ffca28; font-weight: bold; cursor: pointer; pointer-events: auto; backdrop-filter: blur(5px); z-index: 1800; }
+        #btn-return-home:hover { background: rgba(70, 40, 16, 0.92); }
+
+        /* 准星 (用于提示屏幕中心点击) */
+        #crosshair { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 10px; height: 10px; border-radius: 50%; background: rgba(255, 255, 255, 0.5); pointer-events: none; display: none; z-index: 999; }
+
+        /* --- 设置面板子项样式 --- */
+        .setting-row { margin-bottom: 15px; border-bottom: 1px solid rgba(255, 202, 40, 0.2); padding-bottom: 10px; }
+        .setting-row label { display: block; font-size: 0.9rem; color: #ffca28; margin-bottom: 5px; }
+        .setting-row input[type="range"] { width: 100%; accent-color: #ffca28; }
+        .setting-row select { width: 100%; background: #3e2723; color: #ffca28; border: 1px solid #ffca28; padding: 5px; border-radius: 4px; }
+    </style>
+    
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+</head>
+<body>
+    <button class="lang-toggle-top" id="lang-btn">中文 / EN</button>
+
+    <div id="start-screen">
+        <h1 class="project-title" id="main-title">翠湖历史夜游探索</h1>
+        <div class="hero-subtitle" id="hero-subtitle">夜色入湖，循灯入境</div>
+        <img class="hero-visual hero-pavilion" src="images/翠湖海心亭.jpg" alt="海心亭建筑">
+        <img class="hero-visual hero-bridge" src="images/翠湖九曲桥.jpg" alt="九曲桥桥梁">
+        <div id="starlight-container"></div>
+        <div class="lantern-container">
+            <div class="lantern-btn" id="btn-start">
+                <img src="lantern-removebg-preview.png" class="lantern-img" onerror="this.style.display='none'">
+                <div class="lantern-text" id="txt-start">开启<br>体验</div>
+            </div>
+            <div class="lantern-btn" onclick="toggleM('modal-s')">
+                <img src="lantern-removebg-preview.png" class="lantern-img" onerror="this.style.display='none'">
+                <div class="lantern-text" id="txt-setting" style="top: 45px;">设置</div>
+            </div>
+            <div class="lantern-btn" onclick="toggleM('modal-a')">
+                <img src="lantern-removebg-preview.png" class="lantern-img" onerror="this.style.display='none'">
+                <div class="lantern-text" id="txt-about" style="top: 45px;">关于</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="loading-screen" class="hidden">
+        <img class="carousel-bg active" src="images/Slide1.jpg">
+        <img class="carousel-bg" src="images/Slide2.jpg">
+        <img class="carousel-bg" src="images/Slide3.jpg">
+        <img class="carousel-bg" src="images/Slide4.jpg">
+        <img class="carousel-bg" src="images/Slide5.jpg">
+
+        <div class="marquee-container">
+            <div class="marquee-text" id="loading-marquee-text">翠湖公园由水月轩、海心亭、九龙池、观鱼楼、莲华禅院、西南岛、竹林岛、金鱼岛等景点组成...</div>
+        </div>
+
+        <div class="loading-ui-wrapper">
+            <div class="progress-bar-container">
+                <div class="progress-fill" id="progress-fill"></div>
+                <img src="icons/宫灯进度.png" class="lantern-icon" id="progress-lantern" alt="加载进度" onerror="this.src='lantern-removebg-preview.png'">
+            </div>
+            <div id="loading-percentage-text">资源加载中 0%</div>
+        </div>
+    </div>
+
+    <div id="ui-overlay">
+        <div class="movement-controls">
+            <div class="control-btn" style="grid-area: w;" id="m-w">W</div>
+            <div class="control-btn" style="grid-area: a;" id="m-a">A</div>
+            <div class="control-btn" style="grid-area: s;" id="m-s">S</div>
+            <div class="control-btn" style="grid-area: d;" id="m-d">D</div>
+        </div>
+        <div class="system-controls">
+            <button class="tour-btn" id="btn-auto-tour">自动游览</button>
+            <img src="icons/音量.jpg" class="sys-btn" id="btn-volume" alt="音量" onerror="this.style.display='none'">
+            <img src="icons/全屏.jpg" class="sys-btn" id="btn-fullscreen" alt="全屏" onerror="this.style.display='none'">
+            <img src="icons/vr设备连接.png" class="sys-btn" id="btn-vr" alt="VR连接" onerror="this.style.display='none'">
+        </div>
+        <button class="wish-launcher" id="btn-wish-open">
+            <img src="lantern-removebg-preview.png" alt="">
+            <span id="txt-wish-open">放祈愿灯</span>
+        </button>
+    </div>
+
+    <button id="btn-return-home" class="hidden">← 返回主界面</button>
+    <button id="btn-return-park" class="hidden">← 返回主园区 / Return</button>
+    <div id="crosshair"></div>
+
+    <div id="info-panel" class="hidden">
+        <button class="close-btn" onclick="closeInfoPanel()">×</button>
+        <img id="info-img" src="" alt="景点图片">
+        <h2 id="info-title">景点名称</h2>
+        <div class="audio-controls">
+            <button class="audio-btn" id="btn-audio-cn">中文解说</button>
+            <button class="audio-btn" id="btn-audio-en">EN Audio</button>
+        </div>
+        <button id="btn-enter-scene">进入内部 / Enter</button>
+    </div>
+
+    <div id="vr-button-container"></div>
+    
+    <div id="modal-s" class="modal hidden">
+        <h3 id="S-t" style="color:#ffca28; margin-bottom: 20px;">系统设置</h3>
+        <div style="max-height: 350px; overflow-y: auto; text-align: left; padding-right: 10px;">
+            <div class="setting-row">
+                <label><span id="label-bgm">背景音乐</span> <span id="bgm-volume-value" style="float:right; color:#fff3c4;">50%</span></label>
+                <input type="range" id="volume-bgm" min="0" max="1" step="0.1" value="0.5">
+            </div>
+            <div class="setting-row">
+                <label><span id="label-narration">解说音量</span> <span id="narration-volume-value" style="float:right; color:#fff3c4;">80%</span></label>
+                <input type="range" id="volume-narration" min="0" max="1" step="0.1" value="0.8">
+            </div>
+            <div class="setting-row">
+                <label id="label-quality">画面质量</label>
+                <select id="quality-select">
+                    <option value="low" id="opt-q-low">低</option>
+                    <option value="medium" id="opt-q-med" selected>中</option>
+                    <option value="high" id="opt-q-high">高</option>
+                </select>
+            </div>
+            <div class="setting-row">
+                <label id="label-sens">鼠标灵敏度</label>
+                <input type="range" id="mouse-sens" min="0.1" max="2" step="0.1" value="1.0">
+            </div>
+            <div class="setting-row">
+                <label id="label-turning">转向模式 (VR)</label>
+                <select id="turning-mode">
+                    <option value="snap" id="opt-t-snap">瞬移</option>
+                    <option value="smooth" id="opt-t-smooth">平滑</option>
+                </select>
+            </div>
+            <div class="setting-row" style="display: flex; justify-content: space-between; align-items: center; border-bottom: none;">
+                <label id="label-invert" style="margin-bottom: 0;">反转 Y 轴</label>
+                <input type="checkbox" id="invert-y" style="width: 20px; height: 20px; accent-color: #ffca28;">
+            </div>
+        </div>
+        <button id="btn-settings-ok" onclick="toggleM('modal-s')" style="width:100%; margin-top:15px; padding:10px; background:#ffca28; border:none; border-radius:5px; cursor:pointer; color:#3e2723; font-weight:bold;">确定</button>
+    </div>
+
+    <div id="modal-a" class="modal about-modal hidden">
+        <h3 id="A-t" style="color:#ffca28;">关于系统</h3>
+        <div id="A-desc" class="about-content">
+            <p><strong>《翠湖历史夜游探索》</strong>是一套基于 Three.js 与 WebVR 技术制作的沉浸式毕业设计项目。系统以昆明翠湖公园为主题，通过夜间氛围、古建筑模型、灯笼引导、景点讲解和 VR 入口，帮助用户在浏览器中完成一次翠湖历史文化夜游体验。</p>
+            <h4>使用流程</h4>
+            <ol>
+                <li>进入主页面后，点击左下角灯笼按钮<strong>“开启体验”</strong>。</li>
+                <li>等待资源加载完成，系统会自动进入翠湖夜游三维场景。</li>
+                <li>进入场景后，可拖动鼠标观察环境，并使用左下角 <strong>W / A / S / D</strong> 按钮或键盘进行移动。</li>
+                <li>将视角对准带有蜡烛提示的景点并点击，可查看景点信息。</li>
+                <li>在景点弹窗中可播放<strong>中文解说</strong>或<strong>英文解说</strong>，也可进入对应建筑或桥梁的局部展示场景。</li>
+                <li>进入局部展示后，点击左上角<strong>“返回主园区”</strong>可回到翠湖主场景。</li>
+            </ol>
+            <h4>主页面按钮</h4>
+            <ul>
+                <li><strong>开启体验：</strong>开始加载模型、图片和音频资源，并进入夜游场景。</li>
+                <li><strong>设置：</strong>调节背景音乐、解说音量、画面质量、鼠标灵敏度、VR 转向模式和 Y 轴反转。</li>
+                <li><strong>关于：</strong>查看项目介绍、操作说明和功能说明。</li>
+                <li><strong>中文 / EN：</strong>切换界面语言，适配中文和英文展示。</li>
+            </ul>
+            <h4>场景功能</h4>
+            <ul>
+                <li><strong>自由浏览：</strong>用户可以在翠湖夜景中移动和观察，感受水面、灯光、建筑与园林环境。</li>
+                <li><strong>景点互动：</strong>当前支持海心亭、九曲桥等重点景点的点击介绍。</li>
+                <li><strong>语音讲解：</strong>景点信息提供中英文音频讲解，便于理解历史文化内容。</li>
+                <li><strong>祈愿灯互动：</strong>用户可以写下愿望并放飞祈愿灯，进入 VR 模式后可用手柄触碰已经升空的祈愿灯查看文字。</li>
+                <li><strong>VR 体验：</strong>连接支持 WebXR 的设备后，可通过 VR 按钮进入沉浸式观看模式。</li>
+                <li><strong>全屏与音量：</strong>右下角按钮可控制全屏、音量设置和 VR 连接。</li>
+            </ul>
+            <h4>操作提示</h4>
+            <ul>
+                <li>建议使用 Chrome 或 Edge 浏览器打开项目。</li>
+                <li>首次加载模型文件较多，请耐心等待进度条完成。</li>
+                <li>如需播放背景音乐，请先点击“开启体验”，浏览器会在用户交互后允许音频播放。</li>
+                <li>如果画面卡顿，可在“设置”中降低画面质量。</li>
+            </ul>
+        </div>
+        <button id="btn-about-close" class="about-close" onclick="toggleM('modal-a')">关闭</button>
+    </div>
+
+    <div id="modal-wish" class="modal wish-modal hidden">
+        <h3 id="wish-title" style="color:#ffca28; margin-top: 0;">写下你的愿望</h3>
+        <p id="wish-desc">把想说的话写在这里，点击放飞后，祈愿灯会从翠湖夜色中升起。进入 VR 模式后，也可以用手柄触碰已经放飞的祈愿灯。</p>
+        <textarea id="wish-input" maxlength="80" placeholder="愿翠湖夜色，照亮我的心愿..."></textarea>
+        <div id="wish-feedback"></div>
+        <div class="wish-actions">
+            <button id="btn-wish-cancel">取消</button>
+            <button id="btn-wish-submit">放飞祈愿灯</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { VRButton } from 'three/addons/webxr/VRButton.js';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+        // --- 多场景管理变量 ---
+        let mainParkModel = null;
+        let vrSupportedDevice = false;
+        const detailScenes = {};  
+        let currentSceneMode = 'main'; 
+
+        // --- 轮播图自动切换逻辑 ---
+        const carouselImages = document.querySelectorAll('.carousel-bg');
+        let currentImageIndex = 0;
+        if (carouselImages.length > 0) {
+            setInterval(() => {
+                carouselImages[currentImageIndex].classList.remove('active');
+                currentImageIndex = (currentImageIndex + 1) % carouselImages.length;
+                carouselImages[currentImageIndex].classList.add('active');
+            }, 4000); 
+        }
+
+        // --- 设置状态管理 ---
+        let appSettings = {
+            bgmVolume: 0.5, narrationVolume: 0.8, quality: 'medium',
+            mouseSensitivity: 1.0, vrTurningMode: 'snap', invertY: false
+        };
+
+        // --- 基础场景 ---
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x01050a);
+        const camera = new THREE.PerspectiveCamera(70, window.innerWidth/window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 8, 28); 
+        const playerRig = new THREE.Group();
+        scene.add(playerRig);
+        playerRig.add(camera);
+        const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance' });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); 
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.outputColorSpace = THREE.SRGBColorSpace; 
+        renderer.xr.enabled = true;
+        renderer.xr.setReferenceSpaceType('local-floor');
+        // VR renders the scene twice. A smaller XR framebuffer is a large performance win
+        // while remaining sharp enough on standalone headsets.
+        renderer.xr.setFramebufferScaleFactor(0.45);
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.8; 
+        document.body.appendChild(renderer.domElement);
+        document.body.appendChild(VRButton.createButton(renderer, {
+            optionalFeatures: ['local-floor', 'bounded-floor', 'hand-tracking', 'dom-overlay'],
+            domOverlay: { root: document.body }
+        }));
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = false;
+        controls.rotateSpeed = 0.65;
+        controls.enablePan = false;
+        controls.minPolarAngle = Math.PI * 0.18;
+        controls.maxPolarAngle = Math.PI * 0.82;
+        controls.target.set(0, 5, 0);
+
+        // --- 环境布置 ---
+        scene.add(new THREE.AmbientLight(0x445566, 2.8)); 
+        const directionalLight = new THREE.DirectionalLight(0xccddff, 3.5); 
+        directionalLight.position.set(10, 20, 10);
+        scene.add(directionalLight);
+
+        const groundGroup = new THREE.Group();
+        scene.add(groundGroup);
+
+        const baseGeo = new THREE.PlaneGeometry(152, 178, 1, 1);
+        const baseMat = new THREE.MeshStandardMaterial({ color: 0x3b3932, roughness: 0.92, metalness: 0.02 });
+        const stoneBase = new THREE.Mesh(baseGeo, baseMat);
+        stoneBase.rotation.x = -Math.PI / 2;
+        stoneBase.position.set(8, -0.08, 15);
+        groundGroup.add(stoneBase);
+
+        const waterSurfaces = [];
+        const waterMat = new THREE.MeshStandardMaterial({
+            color: 0x075f66,
+            emissive: 0x02363a,
+            emissiveIntensity: 0.28,
+            roughness: 0.18,
+            metalness: 0.58,
+            transparent: true,
+            opacity: 0.86,
+            flatShading: true
+        });
+        function addPond(x, z, sx, sz, rotation = 0) {
+            const pond = new THREE.Mesh(new THREE.CircleGeometry(1, 96), waterMat.clone());
+            pond.rotation.x = -Math.PI / 2;
+            pond.rotation.z = rotation;
+            pond.position.set(x, 0.02, z);
+            pond.scale.set(sx, sz, 1);
+            pond.userData.waveSeed = Math.random() * Math.PI * 2;
+            groundGroup.add(pond);
+            waterSurfaces.push(pond);
+            return pond;
+        }
+        addPond(-28, 12, 22, 14, 0.18);
+        addPond(5, -8, 28, 18, -0.22);
+        addPond(38, -34, 24, 13, 0.38);
+        addPond(-24, 58, 18, 25, -0.36);
+
+        const pathMat = new THREE.MeshStandardMaterial({ color: 0x777063, roughness: 0.98, metalness: 0.01 });
+        function addStonePath(x, z, sx, sz, rotation = 0) {
+            const path = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), pathMat);
+            path.rotation.x = -Math.PI / 2;
+            path.rotation.z = rotation;
+            path.position.set(x, 0.04, z);
+            path.scale.set(sx, sz, 1);
+            groundGroup.add(path);
+            return path;
+        }
+        addStonePath(8, 12, 92, 7, 0.08);
+        addStonePath(-20, 25, 8, 70, -0.16);
+        addStonePath(38, -12, 9, 58, 0.34);
+        addStonePath(6, -38, 74, 6, -0.06);
+
+        const pebbleGroup = new THREE.Group();
+        groundGroup.add(pebbleGroup);
+        const pebbleMat = new THREE.MeshStandardMaterial({ color: 0xaaa08e, roughness: 1, metalness: 0 });
+        const pebbleGeo = new THREE.CircleGeometry(0.28, 10);
+        for (let i = 0; i < 180; i++) {
+            const pebble = new THREE.Mesh(pebbleGeo, pebbleMat);
+            const lane = i % 4;
+            const x = lane === 0 ? -38 + Math.random() * 92 : lane === 1 ? -24 + Math.random() * 8 : lane === 2 ? 34 + Math.random() * 9 : -30 + Math.random() * 74;
+            const z = lane === 0 ? 8 + Math.random() * 8 : lane === 1 ? -10 + Math.random() * 70 : lane === 2 ? -42 + Math.random() * 58 : -42 + Math.random() * 7;
+            pebble.rotation.x = -Math.PI / 2;
+            pebble.rotation.z = Math.random() * Math.PI;
+            pebble.position.set(x, 0.07, z);
+            const s = 0.6 + Math.random() * 1.4;
+            pebble.scale.set(s * (0.7 + Math.random() * 0.6), s, 1);
+            pebbleGroup.add(pebble);
+        }
+
+        const starGeo = new THREE.BufferGeometry();
+        const starPos = [];
+        for(let i=0; i<3000; i++) starPos.push((Math.random()-0.5)*400, Math.random()*200, (Math.random()-0.5)*400);
+        starGeo.setAttribute('position', new THREE.Float32BufferAttribute(starPos, 3));
+        const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({color:0xffffff, size:0.22}));
+        scene.add(stars);
+
+        const riverLanterns = new THREE.Group();
+        const lanternGeo = new THREE.BoxGeometry(0.6, 0.4, 0.6);
+        const lanternMat = new THREE.MeshStandardMaterial({ color: 0xffcc00, emissive: 0xff6600, emissiveIntensity: 0.8 });
+        for(let i = 0; i < 30; i++) {
+            const l = new THREE.Mesh(lanternGeo, lanternMat);
+            l.position.set((Math.random()-0.5)*80, 0, (Math.random()-0.5)*80);
+            l.userData = { offset: Math.random()*Math.PI*2, speed: Math.random()*0.02+0.01 };
+            riverLanterns.add(l);
+        }
+        scene.add(riverLanterns);
+
+        const gltfLoader = new GLTFLoader();
+        
+        // --- 音乐与解说 ---
+        if (window.__cuihuBgmAudio && !window.__cuihuBgmAudio.paused) {
+            window.__cuihuBgmAudio.pause();
+        }
+        const bgmAudio = window.__cuihuBgmAudio || new Audio('bgm.mp3.ogg'); 
+        window.__cuihuBgmAudio = bgmAudio;
+        bgmAudio.src = 'bgm.mp3.ogg';
+        bgmAudio.loop = true;
+        bgmAudio.preload = 'auto';
+        const bgmSessionId = `${Date.now()}-${Math.random()}`;
+        const bgmChannel = 'BroadcastChannel' in window ? new BroadcastChannel('cuihu-bgm-control') : null;
+        if (bgmChannel) {
+            bgmChannel.onmessage = (event) => {
+                if (event.data?.type === 'claim-bgm' && event.data?.id !== bgmSessionId) {
+                    bgmAudio.pause();
+                }
+            };
+        }
+        window.addEventListener('pagehide', () => bgmAudio.pause());
+        window.addEventListener('beforeunload', () => bgmAudio.pause());
+        let currentBuildingAudio = new Audio();
+
+        // --- 设置面板交互逻辑 ---
+        const bgmVolumeInput = document.getElementById('volume-bgm');
+        const narrationVolumeInput = document.getElementById('volume-narration');
+        const bgmVolumeValue = document.getElementById('bgm-volume-value');
+        const narrationVolumeValue = document.getElementById('narration-volume-value');
+
+        function applyBgmVolume(value, shouldTryPlay = false) {
+            appSettings.bgmVolume = Number(value);
+            bgmAudio.volume = appSettings.bgmVolume;
+            bgmAudio.muted = appSettings.bgmVolume === 0;
+            bgmVolumeValue.innerText = `${Math.round(appSettings.bgmVolume * 100)}%`;
+            if (shouldTryPlay && isExploreMode && bgmAudio.paused && appSettings.bgmVolume > 0) {
+                bgmChannel?.postMessage({ type: 'claim-bgm', id: bgmSessionId });
+                bgmAudio.play().catch(e => console.log("背景音乐播放仍受浏览器限制:", e));
+            }
+        }
+
+        function applyNarrationVolume(value) {
+            appSettings.narrationVolume = Number(value);
+            currentBuildingAudio.volume = appSettings.narrationVolume;
+            narrationVolumeValue.innerText = `${Math.round(appSettings.narrationVolume * 100)}%`;
+        }
+
+        applyBgmVolume(appSettings.bgmVolume);
+        applyNarrationVolume(appSettings.narrationVolume);
+
+        bgmVolumeInput.addEventListener('input', (e) => {
+            applyBgmVolume(e.target.value, true);
+        });
+        bgmVolumeInput.addEventListener('change', (e) => {
+            applyBgmVolume(e.target.value, true);
+        });
+        narrationVolumeInput.addEventListener('input', (e) => {
+            applyNarrationVolume(e.target.value);
+        });
+        narrationVolumeInput.addEventListener('change', (e) => {
+            applyNarrationVolume(e.target.value);
+        });
+        document.getElementById('quality-select').addEventListener('change', (e) => {
+            appSettings.quality = e.target.value;
+          const pixelRatio = appSettings.quality === 'high' ? window.devicePixelRatio : 
+                               appSettings.quality === 'medium' ? 1.0 : 0.5;
+            renderer.setPixelRatio(pixelRatio);
+        });
+        document.getElementById('mouse-sens').addEventListener('input', (e) => {
+            appSettings.mouseSensitivity = parseFloat(e.target.value);
+            controls.rotateSpeed = appSettings.mouseSensitivity * (appSettings.invertY ? -1 : 1);
+        });
+        document.getElementById('turning-mode').addEventListener('change', (e) => {
+            appSettings.vrTurningMode = e.target.value;
+        });
+        document.getElementById('invert-y').addEventListener('change', (e) => {
+            appSettings.invertY = e.target.checked;
+            controls.rotateSpeed = appSettings.mouseSensitivity * (appSettings.invertY ? -1 : 1);
+        });
+
+        // --- 蜡烛与射线检测系统 ---
+        let isExploreMode = false;
+        let activeBuildingData = null; 
+        const candleGroup = new THREE.Group();
+        scene.add(candleGroup);
+        const wishLanternGroup = new THREE.Group();
+        scene.add(wishLanternGroup);
+        const activeWishLanterns = [];
+
+        const candleTexture = new THREE.TextureLoader().load('icons/蜡烛.png');
+        const wishLanternTexture = new THREE.TextureLoader().load('lantern-removebg-preview.png');
+        function addCandleIcon(position, nameCn, nameEn, imgName, audioCnName, audioEnName, sceneId) {
+            const material = new THREE.SpriteMaterial({ map: candleTexture, transparent: true });
+            const sprite = new THREE.Sprite(material);
+            sprite.position.copy(position);
+            sprite.scale.set(4, 4, 1);
+            sprite.userData = {
+                isCandle: true, 
+                buildingNameCn: nameCn, buildingNameEn: nameEn,
+                imagePath: `images/${imgName}`, 
+                audioCnPath: `audio/${audioCnName}`, audioEnPath: `audio/${audioEnName}`,
+                sceneId: sceneId 
+            };
+            candleGroup.add(sprite);
+
+            // A larger invisible target makes distant hotspots practical to aim at in VR.
+            const hitArea = new THREE.Mesh(
+                new THREE.SphereGeometry(3.5, 8, 6),
+                new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.001, depthWrite: false })
+            );
+            hitArea.position.copy(position);
+            hitArea.userData = { ...sprite.userData, isHotspotHitArea: true };
+            candleGroup.add(hitArea);
+        }
+
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+
+        function createWishTextSprite(text) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 512;
+            canvas.height = 256;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'rgba(35, 20, 10, 0.78)';
+            ctx.strokeStyle = 'rgba(255, 202, 40, 0.92)';
+            ctx.lineWidth = 4;
+            ctx.roundRect(18, 22, 476, 190, 18);
+            ctx.fill();
+            ctx.stroke();
+            ctx.fillStyle = '#fff4c2';
+            ctx.font = 'bold 30px "Microsoft YaHei", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            const cleanText = text.length > 36 ? `${text.slice(0, 36)}...` : text;
+            const lines = cleanText.match(/.{1,12}/g) || [cleanText];
+            lines.slice(0, 3).forEach((line, index) => {
+                ctx.fillText(line, canvas.width / 2, 82 + index * 42);
+            });
+            const texture = new THREE.CanvasTexture(canvas);
+            texture.colorSpace = THREE.SRGBColorSpace;
+            const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: texture, transparent: true, opacity: 0 }));
+            sprite.scale.set(7.2, 3.6, 1);
+            sprite.position.set(0, 3.4, 0);
+            return sprite;
+        }
+
+        function createWishLantern(wishText) {
+            const group = new THREE.Group();
+            const direction = new THREE.Vector3();
+            camera.getWorldDirection(direction);
+            const startPos = camera.position.clone().add(direction.multiplyScalar(7));
+            startPos.y = Math.max(2.2, camera.position.y - 1.8);
+            group.position.copy(startPos);
+
+            const body = new THREE.Sprite(new THREE.SpriteMaterial({ map: wishLanternTexture, transparent: true }));
+            body.scale.set(2.1, 2.8, 1);
+            body.userData.wishRoot = group;
+            group.add(body);
+
+            const glow = new THREE.PointLight(0xffaa33, 2.2, 13);
+            glow.position.set(0, 0.1, 0);
+            group.add(glow);
+
+            const halo = new THREE.Mesh(
+                new THREE.SphereGeometry(0.85, 20, 20),
+                new THREE.MeshBasicMaterial({ color: 0xffb12a, transparent: true, opacity: 0.18 })
+            );
+            halo.userData.wishRoot = group;
+            group.add(halo);
+
+            const textSprite = createWishTextSprite(wishText);
+            group.add(textSprite);
+            group.userData = {
+                isWishLantern: true,
+                wishText,
+                bornAt: clock.getElapsedTime(),
+                speed: 0.018 + Math.random() * 0.01,
+                drift: new THREE.Vector3((Math.random() - 0.5) * 0.018, 0, (Math.random() - 0.5) * 0.018),
+                textSprite,
+                glow,
+                halo,
+                activeUntil: 0
+            };
+            wishLanternGroup.add(group);
+            activeWishLanterns.push(group);
+            while (activeWishLanterns.length > 6) {
+                const oldest = activeWishLanterns.shift();
+                wishLanternGroup.remove(oldest);
+                oldest.traverse((object) => {
+                    object.geometry?.dispose();
+                    if (object.material) {
+                        object.material.map?.dispose();
+                        object.material.dispose();
+                    }
+                });
+            }
+            activateWishLantern(group);
+        }
+
+        function useLightweightVrMaterials(root) {
+            const materialCache = new Map();
+            root.traverse((object) => {
+                if (!object.isMesh || !object.material) return;
+                const originals = Array.isArray(object.material) ? object.material : [object.material];
+                const replacements = originals.map((material) => {
+                    if (materialCache.has(material)) return materialCache.get(material);
+                    const lightweight = new THREE.MeshBasicMaterial({
+                        map: material.map || null,
+                        color: material.color || new THREE.Color(0xffffff),
+                        transparent: material.transparent,
+                        opacity: material.opacity,
+                        alphaTest: material.alphaTest,
+                        side: material.side,
+                        vertexColors: material.vertexColors
+                    });
+                    materialCache.set(material, lightweight);
+                    material.dispose();
+                    return lightweight;
+                });
+                object.material = Array.isArray(object.material) ? replacements : replacements[0];
+            });
+        }
+
+        function getWishRoot(object) {
+            let current = object;
+            while (current) {
+                if (current.userData && current.userData.isWishLantern) return current;
+                if (current.userData && current.userData.wishRoot) return current.userData.wishRoot;
+                current = current.parent;
+            }
+            return null;
+        }
+
+        function activateWishLantern(lantern) {
+            lantern.userData.activeUntil = clock.getElapsedTime() + 4.2;
+            lantern.userData.textSprite.material.opacity = 1;
+            lantern.userData.glow.intensity = 4.2;
+            lantern.userData.halo.material.opacity = 0.32;
+        }
+        
+        window.addEventListener('pointerdown', (event) => {
+            if (event.target instanceof Element && event.target.closest('#ui-overlay, .modal, #start-screen, #loading-screen, #btn-return-home, #btn-return-park, #lang-btn')) return;
+            if (!isExploreMode || currentSceneMode !== 'main') return; 
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+            raycaster.setFromCamera(mouse, camera);
+            const wishIntersects = raycaster.intersectObjects(wishLanternGroup.children, true);
+            if (wishIntersects.length > 0) {
+                const touchedLantern = getWishRoot(wishIntersects[0].object);
+                if (touchedLantern) activateWishLantern(touchedLantern);
+                return;
+            }
+            const intersects = raycaster.intersectObjects(candleGroup.children);
+            if (intersects.length > 0) {
+                const clickedCandle = intersects[0].object;
+                openInfoPanel(clickedCandle.userData);
+            }
+        });
+
+        // --- 语音播放逻辑 ---
+        const btnAudioCn = document.getElementById('btn-audio-cn');
+        const btnAudioEn = document.getElementById('btn-audio-en');
+
+        function playBuildingAudio(path, btnElement) {
+            if (currentBuildingAudio.src.includes(path) && !currentBuildingAudio.paused) {
+                currentBuildingAudio.pause();
+                btnElement.classList.remove('playing');
+                return;
+            }
+            btnAudioCn.classList.remove('playing');
+            btnAudioEn.classList.remove('playing');
+            currentBuildingAudio.src = path;
+            currentBuildingAudio.volume = appSettings.narrationVolume; 
+            currentBuildingAudio.play().catch(e => console.log("语音播放失败:", e));
+            btnElement.classList.add('playing');
+        }
+
+        function openInfoPanel(data) {
+            activeBuildingData = data; 
+            document.getElementById('info-panel').classList.remove('hidden');
+            document.getElementById('info-title').innerText = currentLang === 'cn' ? data.buildingNameCn : data.buildingNameEn;
+            const imgElement = document.getElementById('info-img');
+            imgElement.src = data.imagePath;
+            imgElement.onerror = () => { imgElement.src = 'lantern-removebg-preview.png'; }; 
+            btnAudioCn.onclick = () => playBuildingAudio(data.audioCnPath, btnAudioCn);
+            btnAudioEn.onclick = () => playBuildingAudio(data.audioEnPath, btnAudioEn);
+            document.getElementById('btn-enter-scene').innerText = currentLang === 'cn' ? "进入内部 / Enter" : "Enter Scene";
+        }
+
+        window.closeInfoPanel = () => {
+            activeBuildingData = null; 
+            document.getElementById('info-panel').classList.add('hidden');
+            currentBuildingAudio.pause();
+            btnAudioCn.classList.remove('playing');
+            btnAudioEn.classList.remove('playing');
+        };
+
+        // --- 场景切换逻辑 ---
+        const btnEnterScene = document.getElementById('btn-enter-scene');
+        const btnReturnPark = document.getElementById('btn-return-park');
+        const detailSceneFiles = {
+            '放大海心亭建筑': '放大海心亭建筑.web.glb',
+            '九曲桥展开图': '九曲桥展开图.glb'
+        };
+
+        btnEnterScene.onclick = () => {
+            if (!activeBuildingData || !activeBuildingData.sceneId) return;
+            const targetSceneId = activeBuildingData.sceneId;
+            btnEnterScene.innerText = "加载中 Loading...";
+
+            if (mainParkModel) mainParkModel.visible = false;
+            candleGroup.visible = false;
+            wishLanternGroup.visible = false;
+            wishOpenBtn.style.display = 'none';
+            btnReturnHome.classList.add('hidden');
+            setAutoTourState(false);
+            
+            if (!detailScenes[targetSceneId]) {
+                gltfLoader.load(`models/${detailSceneFiles[targetSceneId] || `${targetSceneId}.glb`}`, (gltf) => {
+                    const detailModel = gltf.scene;
+                    
+                    // 【修复 1】：把海心亭拉出水面！专门给海心亭设置更高的 Y 轴。
+                    if (targetSceneId === "放大海心亭建筑") {
+                        detailModel.position.set(0, 15, 0); 
+                    } else {
+                        detailModel.position.set(0, 0, 0); 
+                    }
+                    
+                    scene.add(detailModel);
+                    detailScenes[targetSceneId] = detailModel;
+                    closeInfoPanel();
+                    enterDetailView(targetSceneId);
+                });
+            } else {
+                detailScenes[targetSceneId].visible = true;
+                closeInfoPanel();
+                enterDetailView(targetSceneId);
+            }
+        };
+
+        function enterDetailView(sceneId) {
+            currentSceneMode = sceneId;
+            btnReturnPark.classList.remove('hidden'); 
+            
+            if (sceneId === "放大海心亭建筑") {
+                // 【修复 1-附带】：建筑抬高了，你的视角相机也要跟着抬高。
+                camera.position.set(0, 17, 8); 
+                controls.target.set(0, 16, 0); 
+            } else if (sceneId === "九曲桥展开图") {
+                camera.position.set(0, 3, 10); 
+                controls.target.set(0, 1, 0);
+            } else {
+                camera.position.set(0, 2, 5);
+                controls.target.set(0, 1, 0);
+            }
+            controls.update();
+        }
+
+        btnReturnPark.onclick = () => {
+            if (detailScenes[currentSceneMode]) {
+                detailScenes[currentSceneMode].visible = false;
+            }
+            if (mainParkModel) mainParkModel.visible = true;
+            candleGroup.visible = true;
+            wishLanternGroup.visible = true;
+            wishOpenBtn.style.display = 'flex';
+            btnReturnHome.classList.remove('hidden');
+            btnReturnPark.classList.add('hidden');
+            currentSceneMode = 'main';
+            playerRig.position.set(0, 0, 0);
+            camera.position.set(0, 8, 28);
+            controls.target.set(0, 5, 0);
+            controls.update();
+        };
+
+        // --- UI 交互与中英翻译字典 ---
+        let currentLang = 'cn';
+        const aboutCn = `
+            <p><strong>《翠湖历史夜游探索》</strong>是一套基于 Three.js 与 WebVR 技术制作的沉浸式毕业设计项目。系统以昆明翠湖公园为主题，通过夜间氛围、古建筑模型、灯笼引导、景点讲解和 VR 入口，帮助用户在浏览器中完成一次翠湖历史文化夜游体验。</p>
+            <h4>使用流程</h4>
+            <ol>
+                <li>进入主页面后，点击左下角灯笼按钮<strong>“开启体验”</strong>。</li>
+                <li>等待资源加载完成，系统会自动进入翠湖夜游三维场景。</li>
+                <li>进入场景后，可拖动鼠标观察环境，并使用左下角 <strong>W / A / S / D</strong> 按钮或键盘进行移动。</li>
+                <li>将视角对准带有蜡烛提示的景点并点击，可查看景点信息。</li>
+                <li>在景点弹窗中可播放<strong>中文解说</strong>或<strong>英文解说</strong>，也可进入对应建筑或桥梁的局部展示场景。</li>
+                <li>进入局部展示后，点击左上角<strong>“返回主园区”</strong>可回到翠湖主场景。</li>
+            </ol>
+            <h4>主页面按钮</h4>
+            <ul>
+                <li><strong>开启体验：</strong>开始加载模型、图片和音频资源，并进入夜游场景。</li>
+                <li><strong>设置：</strong>调节背景音乐、解说音量、画面质量、鼠标灵敏度、VR 转向模式和 Y 轴反转。</li>
+                <li><strong>关于：</strong>查看项目介绍、操作说明和功能说明。</li>
+                <li><strong>中文 / EN：</strong>切换界面语言，适配中文和英文展示。</li>
+            </ul>
+            <h4>场景功能</h4>
+            <ul>
+                <li><strong>自由浏览：</strong>用户可以在翠湖夜景中移动和观察，感受水面、灯光、建筑与园林环境。</li>
+                <li><strong>景点互动：</strong>当前支持海心亭、九曲桥等重点景点的点击介绍。</li>
+                <li><strong>语音讲解：</strong>景点信息提供中英文音频讲解，便于理解历史文化内容。</li>
+                <li><strong>VR 体验：</strong>连接支持 WebXR 的设备后，可通过 VR 按钮进入沉浸式观看模式。</li>
+                <li><strong>全屏与音量：</strong>右下角按钮可控制全屏、音量设置和 VR 连接。</li>
+            </ul>
+            <h4>操作提示</h4>
+            <ul>
+                <li>建议使用 Chrome 或 Edge 浏览器打开项目。</li>
+                <li>首次加载模型文件较多，请耐心等待进度条完成。</li>
+                <li>如需播放背景音乐，请先点击“开启体验”，浏览器会在用户交互后允许音频播放。</li>
+                <li>如果画面卡顿，可在“设置”中降低画面质量。</li>
+            </ul>`;
+        const aboutEn = `
+            <p><strong>Cuihu Historical Night Tour</strong> is an immersive graduation project built with Three.js and WebVR. The experience presents Kunming Cuihu Park through a night-time atmosphere, historical architecture models, lantern guidance, scenic spot narration, and VR access.</p>
+            <h4>How to Use</h4>
+            <ol>
+                <li>On the home screen, click the lantern button <strong>Start</strong>.</li>
+                <li>Wait for the resources to finish loading. The system will enter the 3D night-tour scene automatically.</li>
+                <li>In the scene, drag the mouse to look around, and use the <strong>W / A / S / D</strong> buttons or keyboard keys to move.</li>
+                <li>Aim at a scenic spot marked by a candle hint and click it to open the information panel.</li>
+                <li>Use the panel to play Chinese or English narration, or enter the detailed display scene for the selected building or bridge.</li>
+                <li>In a detailed scene, click <strong>Return</strong> in the upper-left corner to go back to the main park.</li>
+            </ol>
+            <h4>Home Buttons</h4>
+            <ul>
+                <li><strong>Start:</strong> Loads models, images, and audio resources, then enters the night-tour scene.</li>
+                <li><strong>Settings:</strong> Adjusts BGM volume, narration volume, visual quality, mouse sensitivity, VR turning mode, and Y-axis inversion.</li>
+                <li><strong>About:</strong> Opens the project introduction, operation guide, and feature description.</li>
+                <li><strong>Chinese / EN:</strong> Switches the interface language.</li>
+            </ul>
+            <h4>Scene Features</h4>
+            <ul>
+                <li><strong>Free exploration:</strong> Move through the night scene and view the water, lighting, buildings, and garden environment.</li>
+                <li><strong>Scenic interaction:</strong> Click key sites such as Haixin Pavilion and Jiuqu Bridge to view details.</li>
+                <li><strong>Audio narration:</strong> Scenic spots include Chinese and English audio explanations.</li>
+                <li><strong>Wish lantern interaction:</strong> Users can write a wish and launch a lantern. In VR mode, launched lanterns can be touched with the controller to reveal the message.</li>
+                <li><strong>VR experience:</strong> Use a WebXR-compatible device and the VR button to enter immersive viewing mode.</li>
+                <li><strong>Fullscreen and audio:</strong> Use the bottom-right controls for fullscreen, volume settings, and VR connection.</li>
+            </ul>
+            <h4>Tips</h4>
+            <ul>
+                <li>Chrome or Edge is recommended.</li>
+                <li>The first load may take some time because the project contains many model files.</li>
+                <li>Click Start first if background music does not play, because browsers require user interaction before audio playback.</li>
+                <li>If performance is slow, lower the visual quality in Settings.</li>
+            </ul>`;
+        const langData = {
+            cn: { 
+                title: "翠湖历史夜游探索", subtitle: "夜色入湖，循灯入境", start: "开启<br>体验", setting: "设置", about: "关于",
+                settingsTitle: "系统设置", btnOk: "确定", aboutTitle: "关于系统", aboutDesc: aboutCn, btnClose: "关闭",
+                loadingText: "资源加载中", enterText: "加载完成，即将进入...",
+                labelBgm: "背景音乐", labelNarration: "解说音量", labelQuality: "画面质量", 
+                labelSens: "鼠标灵敏度", labelTurning: "转向模式 (VR)", labelInvert: "反转 Y 轴",
+                wishOpen: "放祈愿灯", wishTitle: "写下你的愿望", wishDesc: "把想说的话写在这里，点击放飞后，祈愿灯会从翠湖夜色中升起。进入 VR 模式后，也可以用手柄触碰已经放飞的祈愿灯。",
+                wishPlaceholder: "愿翠湖夜色，照亮我的心愿...", wishSubmit: "放飞祈愿灯", wishCancel: "取消", wishEmpty: "请先写下一句话，再放飞祈愿灯。", wishDone: "祈愿灯已放飞，抬头看看夜空吧。",
+                returnHome: "← 返回主界面", autoTour: "自动游览", stopTour: "停止游览",
+                optLow: "低", optMed: "中", optHigh: "高", optSnap: "瞬移", optSmooth: "平滑",
+                marquee: "翠湖公园由水月轩、海心亭、九龙池、观鱼楼、莲华禅院、西南岛、竹林岛、金鱼岛等景点组成..."
+            },
+            en: { 
+                title: "Cuihu Night Tour", subtitle: "Follow the lanterns into Cuihu night", start: "Start", setting: "Settings", about: "About",
+                settingsTitle: "System Settings", btnOk: "OK", aboutTitle: "About System", aboutDesc: aboutEn, btnClose: "Close",
+                loadingText: "Loading resources", enterText: "Loading complete...",
+                labelBgm: "BGM Volume", labelNarration: "Narration", labelQuality: "Quality", 
+                labelSens: "Sensitivity", labelTurning: "VR Turning", labelInvert: "Invert Y-Axis",
+                wishOpen: "Wish Lantern", wishTitle: "Write a Wish", wishDesc: "Write a message here. After launch, the lantern will rise into the Cuihu night. In VR mode, you can touch launched lanterns with the controller.",
+                wishPlaceholder: "May the Cuihu night carry my wish...", wishSubmit: "Launch Lantern", wishCancel: "Cancel", wishEmpty: "Please write a short message before launching.", wishDone: "Your wish lantern has been launched. Look up into the night sky.",
+                returnHome: "← Home", autoTour: "Auto Tour", stopTour: "Stop Tour",
+                optLow: "Low", optMed: "Med", optHigh: "High", optSnap: "Snap", optSmooth: "Smooth",
+                marquee: "Cuihu Park consists of scenic spots such as Shuyue Pavilion, Haixin Pavilion, Jiulong Pool..."
+            }
+        };
+
+        document.getElementById('lang-btn').onclick = () => {
+            currentLang = currentLang === 'cn' ? 'en' : 'cn';
+            const d = langData[currentLang];
+            document.getElementById('main-title').innerHTML = d.title;
+            document.getElementById('hero-subtitle').innerText = d.subtitle;
+            document.getElementById('txt-start').innerHTML = d.start;
+            document.getElementById('txt-setting').innerHTML = d.setting;
+            document.getElementById('txt-about').innerHTML = d.about;
+            document.getElementById('S-t').innerText = d.settingsTitle;
+            document.getElementById('btn-settings-ok').innerText = d.btnOk;
+            document.getElementById('A-t').innerText = d.aboutTitle;
+            document.getElementById('A-desc').innerHTML = d.aboutDesc;
+            document.getElementById('btn-about-close').innerText = d.btnClose;
+            document.getElementById('loading-marquee-text').innerText = d.marquee; 
+
+            document.getElementById('label-bgm').innerText = d.labelBgm;
+            document.getElementById('label-narration').innerText = d.labelNarration;
+            document.getElementById('label-quality').innerText = d.labelQuality;
+            document.getElementById('label-sens').innerText = d.labelSens;
+            document.getElementById('label-turning').innerText = d.labelTurning;
+            document.getElementById('label-invert').innerText = d.labelInvert;
+            
+            document.getElementById('opt-q-low').innerText = d.optLow;
+            document.getElementById('opt-q-med').innerText = d.optMed;
+            document.getElementById('opt-q-high').innerText = d.optHigh;
+            document.getElementById('opt-t-snap').innerText = d.optSnap;
+            document.getElementById('opt-t-smooth').innerText = d.optSmooth;
+            document.getElementById('txt-wish-open').innerText = d.wishOpen;
+            document.getElementById('wish-title').innerText = d.wishTitle;
+            document.getElementById('wish-desc').innerText = d.wishDesc;
+            document.getElementById('wish-input').placeholder = d.wishPlaceholder;
+            document.getElementById('btn-wish-submit').innerText = d.wishSubmit;
+            document.getElementById('btn-wish-cancel').innerText = d.wishCancel;
+            document.getElementById('btn-return-home').innerText = d.returnHome;
+            document.getElementById('btn-auto-tour').innerText = autoTourActive ? d.stopTour : d.autoTour;
+
+            const currentText = document.getElementById('loading-percentage-text').innerText;
+            const percentMatch = currentText.match(/\d+%/);
+            const percent = percentMatch ? percentMatch[0] : "0%";
+            document.getElementById('loading-percentage-text').innerText = `${d.loadingText} ${percent}`;
+
+            if (activeBuildingData) {
+                document.getElementById('info-title').innerText = currentLang === 'cn' ? activeBuildingData.buildingNameCn : activeBuildingData.buildingNameEn;
+            }
+        };
+
+        window.toggleM = (id) => document.getElementById(id).classList.toggle('hidden');
+        const btnReturnHome = document.getElementById('btn-return-home');
+        const wishOpenBtn = document.getElementById('btn-wish-open');
+        const wishModal = document.getElementById('modal-wish');
+        const wishInput = document.getElementById('wish-input');
+        const wishFeedback = document.getElementById('wish-feedback');
+        const btnWishSubmit = document.getElementById('btn-wish-submit');
+        const btnWishCancel = document.getElementById('btn-wish-cancel');
+        const btnAutoTour = document.getElementById('btn-auto-tour');
+        // Keep the automatic route above walls and roofs.  The previous eye-level
+        // spline crossed the courtyard wall between control points, which made the
+        // camera appear to pass straight through the building.
+        const autoTourCameraCurve = new THREE.CatmullRomCurve3([
+            new THREE.Vector3(-15, 19.0, 116),
+            new THREE.Vector3(-24, 18.5, 80),
+            new THREE.Vector3(-20, 18.0, 38),
+            new THREE.Vector3(-8, 18.5, -6),
+            new THREE.Vector3(8, 19.0, -38),
+            new THREE.Vector3(17, 18.5, -72)
+        ], false, 'centripetal');
+        const autoTourTargetCurve = new THREE.CatmullRomCurve3([
+            new THREE.Vector3(-15, 4.6, 100),
+            new THREE.Vector3(-10, 4.8, 58),
+            new THREE.Vector3(0, 4.8, 18),
+            new THREE.Vector3(18, 4.9, -18),
+            new THREE.Vector3(18, 5.1, -48),
+            new THREE.Vector3(17, 5.0, -60)
+        ], false, 'centripetal');
+        let autoTourActive = false;
+        let autoTourProgress = 0;
+        const autoTourDuration = 34;
+
+        wishOpenBtn.onclick = () => {
+            wishFeedback.innerText = '';
+            wishModal.classList.remove('hidden');
+            wishInput.focus();
+        };
+
+        btnWishCancel.onclick = () => {
+            wishModal.classList.add('hidden');
+        };
+
+        btnWishSubmit.onclick = () => {
+            const wishText = wishInput.value.trim();
+            const d = langData[currentLang];
+            if (!wishText) {
+                wishFeedback.innerText = d.wishEmpty;
+                return;
+            }
+            createWishLantern(wishText);
+            wishInput.value = '';
+            wishFeedback.innerText = d.wishDone;
+            setTimeout(() => wishModal.classList.add('hidden'), 700);
+        };
+
+        function setAutoTourState(active) {
+            autoTourActive = active;
+            btnAutoTour.classList.toggle('active', active);
+            btnAutoTour.innerText = active ? langData[currentLang].stopTour : langData[currentLang].autoTour;
+            if (active) {
+                autoTourProgress = 0;
+                keys.w = keys.a = keys.s = keys.d = false;
+                camera.position.copy(autoTourCameraCurve.getPoint(0));
+                controls.target.copy(autoTourTargetCurve.getPoint(0));
+                controls.update();
+            }
+        }
+
+        btnAutoTour.onclick = () => {
+            if (!isExploreMode || currentSceneMode !== 'main') return;
+            setAutoTourState(!autoTourActive);
+        };
+
+        function showMainParkUi() {
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('loading-screen').classList.add('hidden');
+            document.getElementById('ui-overlay').style.display = 'block';
+            document.getElementById('crosshair').style.display = 'block';
+            btnReturnHome.classList.remove('hidden');
+            wishOpenBtn.style.display = 'flex';
+            isExploreMode = true;
+        }
+
+        function showHomeScreen() {
+            isExploreMode = false;
+            setAutoTourState(false);
+            bgmAudio.pause();
+            if (activeBuildingData) closeInfoPanel();
+            document.getElementById('ui-overlay').style.display = 'none';
+            document.getElementById('crosshair').style.display = 'none';
+            btnReturnHome.classList.add('hidden');
+            btnReturnPark.classList.add('hidden');
+            wishOpenBtn.style.display = 'none';
+            wishModal.classList.add('hidden');
+            document.getElementById('modal-s').classList.add('hidden');
+            document.getElementById('modal-a').classList.add('hidden');
+            document.getElementById('start-screen').classList.remove('hidden');
+            currentSceneMode = 'main';
+            if (mainParkModel) mainParkModel.visible = true;
+            candleGroup.visible = true;
+            wishLanternGroup.visible = true;
+            playerRig.position.set(0, 0, 0);
+            camera.position.set(0, 8, 28);
+            controls.target.set(0, 5, 0);
+            controls.update();
+        }
+
+        btnReturnHome.onclick = showHomeScreen;
+        
+        // --- 点击开启体验 ---
+        document.getElementById('btn-start').onclick = () => {
+            // 【修复 2】：突破浏览器静音限制。必须在点击的瞬间（无延迟代码里）立刻请求播放背景音乐！
+            if (typeof bgmAudio !== 'undefined' && bgmAudio.paused) {
+                bgmChannel?.postMessage({ type: 'claim-bgm', id: bgmSessionId });
+                bgmAudio.play().catch(e => console.error("【BGM 播放受限，等待用户进一步交互】", e));
+            }
+
+            document.getElementById('start-screen').classList.add('hidden');
+
+            if (mainParkModel) {
+                showMainParkUi();
+                return;
+            }
+
+            document.getElementById('loading-screen').classList.remove('hidden');
+
+            const mainModelUrl = vrSupportedDevice ? 'models/翠湖公园VR.glb' : 'models/翠湖公园完整.deploy.glb';
+            gltfLoader.load(
+                mainModelUrl,
+                (gltf) => {
+                    mainParkModel = gltf.scene; 
+                    if (vrSupportedDevice) useLightweightVrMaterials(mainParkModel);
+                    mainParkModel.position.set(0,4,0);
+                    scene.add(mainParkModel);
+                    
+                    // 绑定精确的新模型名称
+                    addCandleIcon(new THREE.Vector3(-25, 22, 7), "海心亭", "Haixin Pavilion", "翠湖海心亭.jpg", "海心亭中文音频.m4a", "海心亭英文音频.mp3", "放大海心亭建筑");
+                    addCandleIcon(new THREE.Vector3(45, 10, -35), "九曲桥", "Jiuqu Bridge", "翠湖九曲桥.jpg", "九曲桥中文音频.m4a", "九曲桥英文音频.mp3", "九曲桥展开图");
+
+                    setTimeout(() => {
+                        showMainParkUi();
+                    }, 500);
+                },
+                (xhr) => {
+                    if (xhr.lengthComputable) {
+                        const percentComplete = Math.round((xhr.loaded / xhr.total) * 100);
+                        document.getElementById('progress-fill').style.width = percentComplete + '%';
+                        document.getElementById('progress-lantern').style.left = percentComplete + '%';
+                        const text = currentLang === 'cn' ? `资源加载中 ${percentComplete}%` : `Loading resources ${percentComplete}%`;
+                        document.getElementById('loading-percentage-text').innerText = text;
+                    }
+                },
+                (error) => {
+                    console.error("模型加载发生错误:", error);
+                    document.getElementById('loading-percentage-text').innerText = "加载失败，请检查模型路径";
+                }
+            );
+        };
+
+        const moveSpeed = 0.22;
+        const vrMoveSpeed = 4.5;
+        const moveForward = new THREE.Vector3();
+        const moveRight = new THREE.Vector3();
+        const moveDelta = new THREE.Vector3();
+        const keys = { w: false, a: false, s: false, d: false };
+        const bindBtn = (id, key) => {
+            const btn = document.getElementById(id);
+            if(btn) {
+                btn.onpointerdown = () => { keys[key] = true; };
+                btn.onpointerup = () => { keys[key] = false; };
+                btn.onpointerleave = () => { keys[key] = false; };
+            }
+        };
+        bindBtn('m-w', 'w'); bindBtn('m-a', 'a'); bindBtn('m-s', 's'); bindBtn('m-d', 'd');
+        window.addEventListener('keydown', (e) => { if(keys.hasOwnProperty(e.key.toLowerCase())) keys[e.key.toLowerCase()] = true; });
+        window.addEventListener('keyup', (e) => { if(keys.hasOwnProperty(e.key.toLowerCase())) keys[e.key.toLowerCase()] = false; });
+
+        function getHorizontalBasis() {
+            camera.getWorldDirection(moveForward);
+            moveForward.y = 0;
+            if (moveForward.lengthSq() < 0.0001) moveForward.set(0, 0, -1);
+            moveForward.normalize();
+            moveRight.crossVectors(moveForward, camera.up).normalize();
+        }
+
+        function moveCameraHorizontal(forwardAmount, rightAmount, speed) {
+            getHorizontalBasis();
+            moveDelta.set(0, 0, 0)
+                .addScaledVector(moveForward, forwardAmount * speed)
+                .addScaledVector(moveRight, rightAmount * speed);
+            camera.position.add(moveDelta);
+            controls.target.add(moveDelta);
+        }
+
+        function applyVrControllerMovement(delta) {
+            if (!renderer.xr.isPresenting || !isExploreMode || currentSceneMode !== 'main') return;
+            const session = renderer.xr.getSession();
+            if (!session) return;
+            for (const source of session.inputSources) {
+                const axes = source.gamepad?.axes;
+                if (!axes || axes.length < 2) continue;
+                const x = Math.abs(axes[2] ?? axes[0]) > 0.15 ? (axes[2] ?? axes[0]) : 0;
+                const y = Math.abs(axes[3] ?? axes[1]) > 0.15 ? (axes[3] ?? axes[1]) : 0;
+                if (x || y) {
+                    getHorizontalBasis();
+                    moveDelta.set(0, 0, 0)
+                        .addScaledVector(moveForward, -y * vrMoveSpeed * delta)
+                        .addScaledVector(moveRight, x * vrMoveSpeed * delta);
+                    playerRig.position.add(moveDelta);
+                }
+            }
+        }
+
+        document.getElementById('btn-volume').onclick = () => { toggleM('modal-s'); };
+        document.getElementById('btn-fullscreen').onclick = () => {
+            if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+            else if (document.exitFullscreen) document.exitFullscreen();
+        };
+
+        // --- 完善 VR 硬件检测 ---
+        const btnVr = document.getElementById('btn-vr');
+        if ('xr' in navigator) {
+            navigator.xr.isSessionSupported('immersive-vr').then(function (supported) {
+                if (supported) {
+                    vrSupportedDevice = true;
+                    btnVr.style.opacity = '1';
+                    btnVr.style.cursor = 'pointer';
+                    btnVr.onclick = () => {
+                        const realVRBtn = document.getElementById('VRButton');
+                        if(realVRBtn) realVRBtn.click();
+                    };
+                } else {
+                    btnVr.style.opacity = '0.4';
+                    btnVr.style.cursor = 'not-allowed';
+                    btnVr.onclick = () => alert(currentLang === 'cn' ? "抱歉，当前设备或浏览器不支持 VR 模式。" : "VR is not supported on your current device.");
+                }
+            });
+        } else {
+            btnVr.style.opacity = '0.4';
+            btnVr.style.cursor = 'not-allowed';
+            btnVr.onclick = () => alert(currentLang === 'cn' ? "浏览器不支持 WebXR" : "WebXR not supported");
+        }
+
+        // --- VR 会话状态监听与手柄射线 ---
+        renderer.xr.addEventListener('sessionstart', () => {
+            // Keep the headset at an elevated sightseeing height instead of lake level.
+            playerRig.position.y = 6;
+            renderer.xr.setFoveation(1);
+            pebbleGroup.visible = false;
+            riverLanterns.visible = false;
+            document.getElementById('ui-overlay').style.display = 'block';
+            document.querySelector('.movement-controls').style.display = 'none';
+            document.querySelector('.system-controls').style.display = 'none';
+            wishOpenBtn.style.display = 'flex';
+            document.getElementById('crosshair').style.display = 'none';
+            document.getElementById('modal-s').classList.add('hidden'); 
+            if(activeBuildingData) closeInfoPanel();
+        });
+
+        renderer.xr.addEventListener('sessionend', () => {
+            playerRig.position.y = 0;
+            pebbleGroup.visible = true;
+            riverLanterns.visible = true;
+            document.getElementById('ui-overlay').style.display = 'block';
+            document.querySelector('.movement-controls').style.display = 'grid';
+            document.querySelector('.system-controls').style.display = 'flex';
+            document.getElementById('crosshair').style.display = 'block';
+            wishOpenBtn.style.display = currentSceneMode === 'main' ? 'flex' : 'none';
+            if(currentSceneMode !== 'main') document.getElementById('btn-return-park').style.display = 'block';
+        });
+
+        const controller1 = renderer.xr.getController(0);
+        playerRig.add(controller1);
+        const controller2 = renderer.xr.getController(1);
+        playerRig.add(controller2);
+        
+        const lineGeometry = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, -80)]);
+        const lineMaterial = new THREE.LineBasicMaterial({ color: 0xff0000, linewidth: 2 });
+        controller1.add(new THREE.Line(lineGeometry, lineMaterial));
+        controller2.add(new THREE.Line(lineGeometry, lineMaterial));
+
+        const controllerRaycaster = new THREE.Raycaster();
+        const controllerMatrix = new THREE.Matrix4();
+        function handleControllerSelect(event) {
+            if (!isExploreMode || currentSceneMode !== 'main') return;
+            const controller = event.target;
+            controllerMatrix.identity().extractRotation(controller.matrixWorld);
+            controllerRaycaster.ray.origin.setFromMatrixPosition(controller.matrixWorld);
+            controllerRaycaster.ray.direction.set(0, 0, -1).applyMatrix4(controllerMatrix);
+
+            const wishHits = controllerRaycaster.intersectObjects(wishLanternGroup.children, true);
+            if (wishHits.length > 0) {
+                const touchedLantern = getWishRoot(wishHits[0].object);
+                if (touchedLantern) activateWishLantern(touchedLantern);
+                return;
+            }
+
+            const candleHits = controllerRaycaster.intersectObjects(candleGroup.children, true);
+            if (candleHits.length > 0) {
+                openInfoPanel(candleHits[0].object.userData);
+            }
+        }
+        controller1.addEventListener('selectstart', handleControllerSelect);
+        controller2.addEventListener('selectstart', handleControllerSelect);
+
+        function updateAutoTour(delta) {
+            if (!autoTourActive) return;
+            autoTourProgress = Math.min(1, autoTourProgress + delta / autoTourDuration);
+            const eased = autoTourProgress < 0.5
+                ? 2 * autoTourProgress * autoTourProgress
+                : 1 - Math.pow(-2 * autoTourProgress + 2, 2) / 2;
+            camera.position.copy(autoTourCameraCurve.getPoint(eased));
+            controls.target.copy(autoTourTargetCurve.getPoint(eased));
+            controls.update();
+            if (autoTourProgress >= 1) {
+                setAutoTourState(false);
+                camera.position.copy(autoTourCameraCurve.getPoint(1));
+                controls.target.copy(autoTourTargetCurve.getPoint(1));
+                controls.update();
+            }
+        }
+
+        // --- 动画循环 ---
+        const clock = new THREE.Clock();
+        function animate() {
+            renderer.setAnimationLoop(() => {
+                const delta = Math.min(clock.getDelta(), 0.05);
+                const time = clock.elapsedTime;
+                controls.update();
+                stars.rotation.y += 0.0003; 
+                
+                if (!renderer.xr.isPresenting) {
+                    waterSurfaces.forEach((water) => {
+                        const pos = water.geometry.attributes.position;
+                        for (let i = 0; i < pos.count; i++) {
+                            const x = pos.getX(i);
+                            const y = pos.getY(i);
+                            const z = Math.sin(x * 4 + time * 1.5 + water.userData.waveSeed) * 0.015 + Math.cos(y * 5 + time * 1.2) * 0.015;
+                            pos.setZ(i, z);
+                        }
+                        pos.needsUpdate = true;
+                        water.geometry.computeVertexNormals();
+                    });
+                }
+
+                if (typeof riverLanterns !== 'undefined' && riverLanterns.children) {
+                    riverLanterns.children.forEach(l => {
+                        l.position.y = Math.sin(time*2 + l.userData.offset)*0.25;
+                        l.rotation.y += l.userData.speed;
+                    });
+                }
+
+                activeWishLanterns.forEach((lantern) => {
+                    const data = lantern.userData;
+                    lantern.position.y += data.speed;
+                    lantern.position.x += data.drift.x;
+                    lantern.position.z += data.drift.z;
+                    lantern.rotation.y += 0.006;
+                    const pulse = 0.5 + Math.sin(time * 3 + data.bornAt) * 0.5;
+                    data.glow.intensity = Math.max(data.glow.intensity * 0.96, 1.7 + pulse * 0.8);
+                    data.halo.material.opacity = Math.max(data.halo.material.opacity * 0.96, 0.12 + pulse * 0.08);
+                    if (time > data.activeUntil) {
+                        data.textSprite.material.opacity = Math.max(0, data.textSprite.material.opacity - 0.025);
+                    }
+                    if (lantern.position.y > 46) {
+                        lantern.position.y = 46;
+                        data.speed = 0.003;
+                    }
+                });
+
+                updateAutoTour(delta);
+                applyVrControllerMovement(delta);
+
+                if (isExploreMode && !autoTourActive) {
+                    if (keys.w) moveCameraHorizontal(1, 0, moveSpeed);
+                    if (keys.s) moveCameraHorizontal(-1, 0, moveSpeed);
+                    if (keys.a) moveCameraHorizontal(0, -1, moveSpeed);
+                    if (keys.d) moveCameraHorizontal(0, 1, moveSpeed);
+                }
+
+                renderer.render(scene, camera);
+            });
+        }
+        animate();
+    </script>
+</body>
+</html>
